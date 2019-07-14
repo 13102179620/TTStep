@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<android.support.constraint.ConstraintLayout xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/titleLy"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,78 +7,44 @@
     android:layout_height="@dimen/titlebar_height"
     android:background="@color/blueBack">
 
-    <TextView
-        android:id="@+id/leftText"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/titlebar_height"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginTop="4dp"
-        android:gravity="center"
-        android:padding="4dp"
-        android:textColor="@drawable/text_item"
-        android:textSize="14sp"
-        tools:ignore="ContentDescription,RelativeOverlap"/>
-
     <ImageView
-        android:id="@+id/leftImg"
+        android:id="@+id/iv_back"
         android:layout_width="wrap_content"
         android:layout_height="@dimen/titlebar_height"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="4dp"
-        android:padding="4dp"
-        android:visibility="visible"
-        tools:ignore="ContentDescription"/>
-
-    <ImageView
-        android:id="@+id/titleImage"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/titlebar_height"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:gravity="center" />
-
-    <TextView
-        android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/titlebar_height"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:gravity="center"
-        android:singleLine="true"
-        android:textColor="@drawable/text_item"
-        android:textSize="20sp"
-        tools:ignore="RelativeOverlap"/>
-
-    <TextView
-        android:id="@+id/rightText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginBottom="4dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="4dp"
-        android:gravity="center"
-        android:padding="4dp"
-        android:textColor="@drawable/text_item"
-        android:textSize="14sp"
-        tools:ignore="RelativeOverlap"/>
-
-    <ImageView
-        android:id="@+id/rightImg"
-        android:layout_width="wrap_content"
-        android:layout_height="@dimen/titlebar_height"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
         android:layout_margin="4dp"
         android:padding="4dp"
+        android:src="@drawable/ic_chevron_left_white_36dp"
         android:scaleType="center"
-        tools:ignore="ContentDescription"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:padding="4dp"
+        android:text="TT计步器"
+        android:textColor="@drawable/text_item"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_setting"
+        android:layout_width="wrap_content"
+        android:layout_height="@dimen/titlebar_height"
+        android:layout_margin="4dp"
+        android:padding="4dp"
+        android:src="@drawable/ic_settings_white_36dp"
+        android:scaleType="center"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

@@ -1,11 +1,12 @@
 package com.syt.ttstep.frame;
 
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.Window;
 import android.view.WindowManager;
 
-import androidx.annotation.Nullable;
-import androidx.fragment.app.FragmentActivity;
+
+
 
 public abstract class BaseActivity extends FragmentActivity {
 
@@ -16,7 +17,7 @@ public abstract class BaseActivity extends FragmentActivity {
 
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    protected void onCreate( Bundle savedInstanceState) {
 
         if (isHideAppTitile){
             this.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -30,16 +31,11 @@ public abstract class BaseActivity extends FragmentActivity {
 
 
 
-        //添加至列表
-        FrameApplication.addToActivityList(this);
+
 
     }
 
-    @Override
-    protected void onDestroy() {
-        FrameApplication.removeFromActivityList(this);
-        super.onDestroy();
-    }
+
 
 
     //初始化组件

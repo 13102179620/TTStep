@@ -3,10 +3,11 @@ package com.syt.ttstep.ui.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.Button;
 
-import androidx.annotation.Nullable;
+
 
 import com.syt.ttstep.R;
 import com.syt.ttstep.frame.BaseActivity;

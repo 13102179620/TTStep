@@ -6,34 +6,36 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
+        android:name=".frame.FrameApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ui.activity.SettingActivity"></activity>
+
         <service
             android:name=".service.PedometerService"
             android:enabled="true"
             android:exported="true"
             android:process=":remote">
             <intent-filter>
-                <action android:name="com.syt.service.IPedometerService"></action>
+                <action android:name="com.syt.service.IPedometerService" />
             </intent-filter>
-
         </service>
 
         <activity
             android:name=".ui.activity.HomeActivity"
             android:screenOrientation="portrait"></activity>
-        <activity android:name=".ui.activity.SplashActivity">
+        <activity android:name=".ui.activity.SplashActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>

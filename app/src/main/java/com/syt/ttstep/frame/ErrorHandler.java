@@ -1,8 +1,9 @@
 package com.syt.ttstep.frame;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
-import androidx.annotation.NonNull;
 
 public class ErrorHandler implements Thread.UncaughtExceptionHandler {
 
@@ -38,7 +39,5 @@ public class ErrorHandler implements Thread.UncaughtExceptionHandler {
             LogWriter.LogToFile("Error","Lines:" + e.getLineNumber() + " : " + e.getMethodName());
         }
         throwable.printStackTrace();
-        FrameApplication.exitApp();
-
     }
 }
