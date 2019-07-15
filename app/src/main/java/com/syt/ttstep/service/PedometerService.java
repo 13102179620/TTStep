@@ -23,7 +23,8 @@ public class PedometerService extends Service {
     public static final String TAG = "PedometerSercice-app";
     public static final int STATUS_NOT_RUN = 0;
     public static final int STATUS_RUNNING = 1;
-    private static final long UPDATE_CHAR_TIME = 60000L;//60秒
+    // TODO: 2019/7/15 改回来
+    private static final long UPDATE_CHAR_TIME = 5000L;//60秒
 
     private SensorManager mSensorManager;
     private PedometerBean mPedometerBean;
@@ -115,13 +116,14 @@ public class PedometerService extends Service {
 
 
 
-
+    //远程AIDL服务接口
     private IPedometerService.Stub iPedometerService = new IPedometerService.Stub() {
         @Override
         public void basicTypes(int anInt, long aLong, boolean aBoolean, float aFloat, double aDouble, String aString) throws RemoteException {
 
         }
 
+        //获取总步数
         @Override
         public int getStepsCount() throws RemoteException {
 
@@ -133,6 +135,7 @@ public class PedometerService extends Service {
             return 0;
         }
 
+        //重置
         @Override
         public void resetCount() throws RemoteException {
             if (mPedometerBean != null){

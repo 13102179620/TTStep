@@ -26,6 +26,7 @@ import com.syt.ttstep.frame.LogWriter;
 import com.syt.ttstep.service.IPedometerService;
 import com.syt.ttstep.service.PedometerService;
 import com.syt.ttstep.utils.ServicesUtils;
+import com.syt.ttstep.utils.StringUtils;
 
 import static com.syt.ttstep.service.PedometerService.STATUS_RUNNING;
 
@@ -163,7 +164,7 @@ public class SettingActivity extends BaseActivity {
             switch (position) {
                 case 0:
                     final float stepLen = settings.getSetpLength();
-                    viewHolder.tvDesc.setText(String.format("计算距离和消耗的热量：%s CM" , stepLen));
+                    viewHolder.tvDesc.setText(String.format("计算距离和消耗的热量：%s CM" , StringUtils.getFormatSring(stepLen)));
                     convertView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -174,7 +175,7 @@ public class SettingActivity extends BaseActivity {
                 case 1:
 
                     final float bodyWeight = settings.getBodyWeight();
-                    viewHolder.tvDesc.setText(String.format("通过体重计算消耗的热零：%s KG" ,bodyWeight));
+                    viewHolder.tvDesc.setText(String.format("通过体重计算消耗的热零：%s KG" ,StringUtils.getFormatSring(bodyWeight)));
                     convertView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -185,7 +186,7 @@ public class SettingActivity extends BaseActivity {
                     break;
                 case 2:
                     double sensitivity = settings.getSensitivity();
-                    viewHolder.tvDesc.setText(String.format("设置传感器灵敏度：%s " ,sensitivity));
+                    viewHolder.tvDesc.setText(String.format("设置传感器灵敏度：%s " , StringUtils.getFormatSring(sensitivity)));
                     convertView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -196,7 +197,7 @@ public class SettingActivity extends BaseActivity {
                 case 3:
 
                     int InterVals = settings.getInterval();
-                    viewHolder.tvDesc.setText(String.format("每隔：%s 秒采集一次数据 " ,InterVals));
+                    viewHolder.tvDesc.setText(String.format("每隔：%s 秒采集一次数据 " ,StringUtils.getFormatSring(InterVals)));
                     convertView.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {

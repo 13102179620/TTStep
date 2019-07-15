@@ -10,17 +10,27 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.os.PersistableBundle;
 import android.os.RemoteException;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.syt.ttstep.R;
 import com.syt.ttstep.beans.PedometerChartBean;
 import com.syt.ttstep.frame.BaseActivity;
@@ -66,7 +76,7 @@ public class HomeActivity extends BaseActivity {
     //每200ms获取一次计步服务中的数据
     private static final int GET_STEP_COUNT_POST_TIME = 5000;
     //每60s获取一次chart更新数据
-    private static final int GET_CHART_DATA_UPDATE_POST_TIME = 60000;
+    private static final int GET_CHART_DATA_UPDATE_POST_TIME = 5000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -239,7 +249,7 @@ public class HomeActivity extends BaseActivity {
     }
 
 
-    //静态内部类handler防止leak
+    //静态内部类handler防止leak,接受自线程发送的消息，丛Service更新数据
     private class MyHandler extends Handler {
 
         @Override
@@ -270,7 +280,7 @@ public class HomeActivity extends BaseActivity {
     }
 
 
-    //更新计步数的方法
+    //更新计步数
     public void updateStepCount() {
         if (remoteService != null) {
             int stepCountVal = 0;
@@ -297,25 +307,34 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-    //更新chartbar数据的方法
+    //更新chartbar数据
     private void updateChartData(PedometerChartBean bean) {
         // TODO: 2019/7/13 横坐标
-        ArrayList<String> xVals = new ArrayList<>();
+        final ArrayList<String> xVals = new ArrayList<>();
         ArrayList<BarEntry> yVals = new ArrayList<BarEntry>();
         if (bean != null) {
             for (int i = 0; i < bean.getIndex(); i++) {
-
                 xVals.add(String.valueOf(i) + "分s");
                 int valY = bean.getArrays()[i];
                 yVals.add(new BarEntry(i, valY));
             }
             tvTime.setText(String.valueOf(bean.getIndex()) + "分");
             BarDataSet set = new BarDataSet(yVals, "所走的步数");
-            set.setBarSpacePercent(2f);
-            ArrayList<BarDataSet> dataSets = new ArrayList<>();
-            dataSets.add(set);
-            BarData data = new BarData(xVals, dataSets);
+            set.setBarBorderWidth(2f);
+
+            BarData data = new BarData(set);
             data.setValueTextSize(10f);
+
+            Description description = new Description();
+            description.setText("您走的步数");
+            barChart.setDescription(description);
+            XAxis xAxis = barChart.getXAxis();
+            xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+            YAxis leftAxis = barChart.getAxisLeft();
+            leftAxis.setAxisMinimum(0f);
+            YAxis rightAxis = barChart.getAxisRight();
+            ValueFormatter formatter = new IndexAxisValueFormatter(xVals);
+            xAxis.setValueFormatter(formatter);
             barChart.setData(data);
             barChart.invalidate();
         }
@@ -405,7 +424,7 @@ public class HomeActivity extends BaseActivity {
         }
     }
 
-
+    //解绑服务
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -449,4 +468,26 @@ public class HomeActivity extends BaseActivity {
     }
 
 
+    // TODO: 2019/7/15 推出状态保存
+    @Override
+    public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
+        try {
+            remoteService.saveData();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        super.onSaveInstanceState(outState, outPersistentState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        return super.onKeyDown(keyCode, event);
+    }
 }
