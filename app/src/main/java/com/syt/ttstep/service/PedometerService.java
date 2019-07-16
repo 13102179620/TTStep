@@ -23,18 +23,18 @@ public class PedometerService extends Service {
     public static final String TAG = "PedometerSercice-app";
     public static final int STATUS_NOT_RUN = 0;
     public static final int STATUS_RUNNING = 1;
-    // TODO: 2019/7/15 改回来
-    private static final long UPDATE_CHAR_TIME = 5000L;//60秒
+
+    private static final long UPDATE_CHAR_TIME = 60000L;//60秒
 
     private SensorManager mSensorManager;
     private PedometerBean mPedometerBean;
     private PedometerListenr mPedometerListenr;
     private Settings mSettings;
     private PedometerChartBean mPedometerChartBean;
+    private int runState = STATUS_NOT_RUN;
 
     private Handler mHandler = new Handler();
-
-    //每隔一分钟，更新一次数据
+    //每隔一分钟，更新一次图表数据
     private Runnable mTimeRunnable = new Runnable() {
         @Override
         public void run() {
@@ -48,36 +48,12 @@ public class PedometerService extends Service {
             }
         }
     };
-    private int runState = STATUS_NOT_RUN;
+
 
 
 
     public PedometerService() {
     }
-
-    public  double  getStepDistance(){
-
-        float stepLen = mSettings.getSetpLength();
-        double distance = (mPedometerBean.getStepsCount() * (long)(stepLen))/100000.0f;
-        return distance;
-    }
-
-    public double getCalorieBySteps(int stepCount){
-        //步长
-        float stepLen = mSettings.getSetpLength() ;
-        //体重
-        float bodyWeight = mSettings.getBodyWeight();
-
-        //定义计算公式：
-        //热量 = 体重kg* 距离km * 1.027  or  0.708
-        double WALKING_FACTOR = 0.708;
-        double RUNNING_FACTOR = 1.027;
-
-        double calorie = (bodyWeight * WALKING_FACTOR) * stepLen * stepCount/100000.0f;
-
-        return calorie;
-    }
-
 
     @Override
     public void onCreate() {
@@ -87,7 +63,13 @@ public class PedometerService extends Service {
         mPedometerListenr = new PedometerListenr(mPedometerBean);
         mSettings = new Settings(this);
         mPedometerChartBean = new PedometerChartBean();
+        Log.d(TAG, "onCreate: Service启动了！");
+    }
 
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy: Service销毁了");
+        super.onDestroy();
     }
 
     @Override
@@ -95,9 +77,33 @@ public class PedometerService extends Service {
         return iPedometerService;
     }
 
+    //计算运动距离,从sp中读取设置
+    public  double  getStepDistance(){
+
+        float stepLen = mSettings.getSetpLength();
+        double distance = (mPedometerBean.getStepsCount() * (long)(stepLen))/100000.0f;
+        return distance;
+    }
+
+    //计算卡路里，从sp中读取设置
+    public double getCalorieBySteps(int stepCount){
+        //步长
+        float stepLen = mSettings.getSetpLength() ;
+        //体重
+        float bodyWeight = mSettings.getBodyWeight();
+
+        double calorie = bodyWeight * 0.8  * stepLen * stepCount/100000.0f;
+
+        return calorie;
+    }
+
+
+
+
 
     //更新chardata数据
     private void updateChartData(){
+
         if (mPedometerChartBean.getIndex() < PedometerChartBean.MaxIndex - 1){
             //更新x轴索引
             mPedometerChartBean.setIndex(mPedometerChartBean.getIndex() + 1);
@@ -108,7 +114,7 @@ public class PedometerService extends Service {
 
 
 
-    //载入缓存
+    //载入缓存 待开发
     private void saveChartBeanData(){
         String json = JsonUtils.objToJson(mPedometerChartBean);
         ACache.get(getApplicationContext()).put("JsonChardata" , json);
@@ -142,10 +148,10 @@ public class PedometerService extends Service {
                 mPedometerBean.reset();
                 saveData();
             }
-            //更新缓存中的数据（清楚）
+
             if(mPedometerChartBean != null){
                 mPedometerChartBean.reset();
-                saveChartBeanData();
+//                saveChartBeanData();
             }
 
 
@@ -190,7 +196,6 @@ public class PedometerService extends Service {
             if (mPedometerBean != null ){
                 return getCalorieBySteps(mPedometerBean.getStepsCount());
             }
-
             return 0;
         }
 
@@ -203,6 +208,8 @@ public class PedometerService extends Service {
             return 0;
         }
 
+        // TODO: 2019/7/16 以天为单位保存一天的运动状态，保存在本地数据库，后续开发以天为单位的表格。
+        // TODO: 2019/7/16 几个接口并未使用，但是预留出来了
         @Override
         public void saveData() throws RemoteException {
             if ( mPedometerBean != null){

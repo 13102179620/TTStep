@@ -1,6 +1,7 @@
 package com.syt.ttstep.utils;
 
 import android.app.ActivityManager;
+import android.app.ApplicationErrorReport;
 import android.content.Context;
 
 import java.util.Iterator;
@@ -16,7 +17,7 @@ public class ServicesUtils {
         }
 
         ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        List serviceList = activityManager.getRunningServices(Integer.MAX_VALUE);
+        List< ActivityManager.RunningServiceInfo> serviceList = activityManager.getRunningServices(Integer.MAX_VALUE);
         Iterator iterator = serviceList.iterator();
         while (iterator.hasNext()){
             ActivityManager.RunningServiceInfo runningServiceInfo =(ActivityManager.RunningServiceInfo) iterator.next();

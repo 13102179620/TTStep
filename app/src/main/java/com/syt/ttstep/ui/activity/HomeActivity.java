@@ -12,6 +12,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.PersistableBundle;
 import android.os.RemoteException;
+
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -21,20 +22,20 @@ import android.widget.TextView;
 
 
 import com.github.mikephil.charting.charts.BarChart;
-import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter;
 import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.syt.ttstep.R;
+import com.syt.ttstep.Settings.Settings;
 import com.syt.ttstep.beans.PedometerChartBean;
 import com.syt.ttstep.frame.BaseActivity;
 import com.syt.ttstep.frame.LogWriter;
+import com.syt.ttstep.frame.PrefsManager;
 import com.syt.ttstep.service.IPedometerService;
 import com.syt.ttstep.service.PedometerService;
 import com.syt.ttstep.utils.MathCaculateUtils;
@@ -42,6 +43,8 @@ import com.syt.ttstep.utils.ServicesUtils;
 import com.syt.ttstep.widget.CircleProgressBar;
 
 import java.util.ArrayList;
+
+import static android.content.Context.BIND_AUTO_CREATE;
 
 public class HomeActivity extends BaseActivity {
 
@@ -61,6 +64,7 @@ public class HomeActivity extends BaseActivity {
     private MyHandler mHandler;
 
     private IPedometerService remoteService;
+    private PrefsManager prefsManager = null;
     //保存当前服务状态
     private int status = -1;
     private static final int STATUS_NOT_RUNNING = 0;
@@ -73,9 +77,9 @@ public class HomeActivity extends BaseActivity {
     private static final int MESSAGE_UP_DATE_STEPS_COUNT = 1000;
     private static final int MESSAGE_UP_DATE_CHART_DATA = 1001;
 
-    //每200ms获取一次计步服务中的数据
-    private static final int GET_STEP_COUNT_POST_TIME = 5000;
-    //每60s获取一次chart更新数据
+    //默认每200ms获取一次计步服务中的数据
+    private static  int getStepCountPostTime = 200;
+    //默认每60s获取一次chart更新数据
     private static final int GET_CHART_DATA_UPDATE_POST_TIME = 5000;
 
     @Override
@@ -85,10 +89,21 @@ public class HomeActivity extends BaseActivity {
         initView();
         initEvent();
         requestData();
-
-
     }
 
+    //设置完成后更新采样时间
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        prefsManager = new PrefsManager(this);
+        getStepCountPostTime = prefsManager.getInt(Settings.INTERVAL);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+    }
 
     //oncreate中先条用该方法,进行服务绑定，但是并没有启动计步功能
     @Override
@@ -207,10 +222,10 @@ public class HomeActivity extends BaseActivity {
                         //防止上次msg未处理在队列中阻塞
                         mHandler.removeMessages(MESSAGE_UP_DATE_STEPS_COUNT);
                         //发送消息更新数据
-//                        mHandler.sendEmptyMessageDelayed(MESSAGE_UP_DATE_STEPS_COUNT,GET_STEP_COUNT_POST_TIME);
+//                        mHandler.sendEmptyMessageDelayed(MESSAGE_UP_DATE_STEPS_COUNT,getStepCountPostTime);
                         mHandler.sendEmptyMessage(MESSAGE_UP_DATE_STEPS_COUNT);
 
-                        Thread.sleep(200);
+                        Thread.sleep(getStepCountPostTime);
                     }
                 } catch (RemoteException e) {
                     e.printStackTrace();
@@ -320,7 +335,7 @@ public class HomeActivity extends BaseActivity {
             }
             tvTime.setText(String.valueOf(bean.getIndex()) + "分");
             BarDataSet set = new BarDataSet(yVals, "所走的步数");
-            set.setBarBorderWidth(2f);
+            set.setBarBorderWidth(1.2f);
 
             BarData data = new BarData(set);
             data.setValueTextSize(10f);
@@ -419,6 +434,9 @@ public class HomeActivity extends BaseActivity {
                 case R.id.iv_setting:
                     Intent intent = new Intent(HomeActivity.this , SettingActivity.class);
                     startActivity(intent);
+
+                case R.id.iv_back:
+                    finish();
             }
 
         }
@@ -437,6 +455,7 @@ public class HomeActivity extends BaseActivity {
             isBandService = false;
             isRunning = false;
             isChartUpdate = false;
+            //解绑
             unbindService(serviceConnection);
         }
 
@@ -446,6 +465,7 @@ public class HomeActivity extends BaseActivity {
         btnStart.setOnClickListener(new MyClickListener());
         btnReset.setOnClickListener(new MyClickListener());
         ivSetting.setOnClickListener(new MyClickListener());
+        ivback.setOnClickListener(new MyClickListener());
     }
 
 
@@ -468,7 +488,7 @@ public class HomeActivity extends BaseActivity {
     }
 
 
-    // TODO: 2019/7/15 推出状态保存
+    // TODO: 2019/7/15 退出状态保存
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
         try {
@@ -487,6 +507,17 @@ public class HomeActivity extends BaseActivity {
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        try {
+            if (keyCode == KeyEvent.KEYCODE_BACK){
+                Intent home = new Intent(Intent.ACTION_MAIN);
+                home.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                home.addCategory(Intent.CATEGORY_HOME);
+                startActivity(home);
+                return true;
+            }
+        }catch (Exception e){
+
+        }
 
         return super.onKeyDown(keyCode, event);
     }

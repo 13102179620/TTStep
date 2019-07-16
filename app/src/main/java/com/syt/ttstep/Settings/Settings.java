@@ -14,8 +14,8 @@ import com.syt.ttstep.frame.PrefsManager;
  */
 public class Settings {
     public static final String TAG = "Setting-app";
-    public static final float[] SENSITIVE_ARRAY = {1.97f, 2.96f, 4.44f, 6.66f, 10.0f, 15.0f, 22.50f, 33.75f, 50.62f};
-    //最快1s10步
+    public static final float[] SENSITIVE_ARRAY = {1.5f, 3.0f, 4.0f, 6.0f, 10.0f, 15.0f, 20.0f, 30.0f, 50.0f};
+    //采样间隔最高100ms
     public static final int[] INTERVAL_ARRAY = {100, 200, 300, 400, 500, 600, 700, 800};
     public static final String SENSITIVITY = "sensitivity";
     public static final String INTERVAL = "interval";
@@ -36,7 +36,7 @@ public class Settings {
         Log.d(TAG, "getSensitivity: 传感器灵敏度为：" + sensitivity);
         return sensitivity;
     }
-
+    //设置信息存入pf
     public void setSensitivity(float sensitivity){
         prefsManager.putFloat(SENSITIVITY , sensitivity);
     }
@@ -50,7 +50,7 @@ public class Settings {
         Log.d(TAG, "getInterval: 获取时间间隔：" + interval);
         return interval;
     }
-
+    //设置信息存入pf
     public void setInterval(int interval)
     {
         prefsManager.putInt(INTERVAL, interval);
