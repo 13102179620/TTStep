@@ -113,7 +113,7 @@ updateChartData(chartBean);
 ```
 
 3. AIDL Service
-AIDL需要注册SensorManager,根据设备版本号，kitkat以下使用加速度传感器，kitakat以上直接使用计步传感器。该Service 提供的功能：
+AIDL需要注册SensorManager,根据设备版本号，kitkat以下使用加速度传感器，kitakat以上直接使用计步传感器。创建两种传感器listner的公共父类，实现相同的方法签名，这样就可以在程序运行中动态生成所需要的Listner。该Service 提供的功能：
     - 计算卡路里以及行走距离：
 		从Setting类中获取用户设置的体重步长信息，与步数做计算，返回给调用的Activity
 		```java
@@ -242,7 +242,71 @@ if (sensor.getType() == Sensor.TYPE_ACCELEROMETER){
 }
 	 ```
 
-	 计步传感器就很简单了，直接获取返回值就行。
-                                            
+	 计步传感器就很简单了，直接获取返回值即可。两类监听接口根据设备版本不同自动生成相应接口：
+```java
+	 private CommonListener mPedometerListenr;
+	 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.KITKAT) {
+					 mPedometerListenr = new PedometerListenr(mPedometerBean);
+			 } else {
+					 mPedometerListenr = new CountStepListner(mPedometerBean);
+					 Log.d(TAG + "jibuqi", "oncreate: 新建成功！");
 
+			 }
+	```
+	其中CommonListener是其公共父类。
+
+5. 设置功能页面：
+   设置功能的保存与生效主要由封装的SharePref类实现保存与读取（这里简单处理了，也可以使用回调接口或者startActivityForResult）。点击ListView中的元素，将出发服务中的相应的设置方法，并保存在sp中，回到HomeActivity条用onRestart进行新参数的设置。
+
+6. 自定义ProgressBar
+	 这里要注意progress值的保存，因为homeActivity会进入后台，再次返回progress信息可能会丢失。
+		
+```java
+			@Override
+	    protected Parcelable onSaveInstanceState()
+	    {
+	        Bundle bundle = new Bundle();
+	        bundle.putInt(KEY_PROGRESS, progress);
+	        bundle.putParcelable(INSTANCE, super.onSaveInstanceState());
+	        return bundle;
+	    }
+
+	    @Override
+	    protected void onRestoreInstanceState(Parcelable state)
+	    {
+	        if (state instanceof Bundle)
+	        {
+	            Bundle bundle = (Bundle) state;
+	            Parcelable parcelable = bundle.getParcelable(INSTANCE);
+	            super.onRestoreInstanceState(parcelable);
+	            progress = bundle.getInt(KEY_PROGRESS);
+	            return;
+	        }
+	        super.onRestoreInstanceState(state);
+	    }
+```
+	
+		onDraw函数中要绘制内外边框，以及边框间填充色以及根据progress值更新bar的颜色
+```java
+				//画圆
+        canvas.drawCircle(width/2 , height/2 , radius , pathPaint);
+        //细边框宽度
+        pathPaint.setStrokeWidth(0.5f);
+        pathPaint.setColor(borderColor);
+        //外边框
+        canvas.drawCircle(width/2,height/2 ,(float)radius+pathWidth/2 , pathPaint);
+        //内边框
+        canvas.drawCircle(width/2,height/2 ,(float)radius-pathWidth/2 , pathPaint);
+
+        sweepGradient = new SweepGradient((float)(width/2) , (float)(height/2) , arcCloros , null);
+
+        fillPait.setShader(sweepGradient);
+        //线帽为圆角
+        fillPait.setStrokeCap(Paint.Cap.ROUND);
+        fillPait.setStrokeWidth(pathWidth);
+        this.oval.set((float) (width / 2 - radius), (float) (height / 2 - radius), (float) (width / 2 + radius), (float) (height / 2 + radius));
+        //根据当前进度绘制bar
+        canvas.drawArc(oval , -90.0F , ((float)progress/(float) maxProgress)*360.0F , false , fillPait);
+```
+# 感谢阅读！
 
