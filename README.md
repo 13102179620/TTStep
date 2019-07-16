@@ -3,6 +3,7 @@
 使用AIDL Service 实现远程通信服务。可实时刷新运动步数，并在BarChart上显示
 ，可自定义计步器设置，APP可根据设置的传感器灵敏度，采样时间，用户的步长体重，动态的进行步数记录以及卡路里消耗计算。
 <p align="center">
+	<img src="https://github.com/13102179620/TTStep/raw/master/md/ttstep.png?raw=true" alt="Sample"  width="200" height="384">
 	<img src="https://github.com/13102179620/TTStep/raw/master/md/ttstep2.png?raw=true" alt="Sample"  width="200" height="384">
 	<img src="https://github.com/13102179620/TTStep/raw/master/md/ttstep3.png?raw=true" alt="Sample"  width="200" height="384">
 	<img src="https://github.com/13102179620/TTStep/raw/master/md/ttstep4.png?raw=true" alt="Sample"  width="200" height="384">
