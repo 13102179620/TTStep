@@ -56,6 +56,7 @@ public class SettingActivity extends BaseActivity {
         ivBack.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d(TAG, "onClick: SettingFinish!!!!!!");
                 finish();
             }
         });

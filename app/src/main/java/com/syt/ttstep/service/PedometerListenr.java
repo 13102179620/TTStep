@@ -11,7 +11,7 @@ import com.syt.ttstep.beans.PedometerBean;
 /**
  * sdk19之前，需要使用加速度传感器去计算步伐
  * */
-public class PedometerListenr implements SensorEventListener {
+public class PedometerListenr implements CommonListener   {
     //步数
     private int stepsCount = 0;
     //灵敏度（相对于diff而言）,这个值与漂移，放大倍数相关 ，需要多次调整
@@ -55,6 +55,8 @@ public class PedometerListenr implements SensorEventListener {
     public void setStepsCount(int step){
         stepsCount = step;
     }
+
+    public int getStepsCount(){return stepsCount;}
 
 
     @Override

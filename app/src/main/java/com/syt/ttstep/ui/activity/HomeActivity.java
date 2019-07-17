@@ -78,9 +78,9 @@ public class HomeActivity extends BaseActivity {
     private static final int MESSAGE_UP_DATE_CHART_DATA = 1001;
 
     //默认每200ms获取一次计步服务中的数据
-    private static  int getStepCountPostTime = 5000;
+    private static  int getStepCountPostTime = 200;
     //默认每60s获取一次chart更新数据
-    private static final int GET_CHART_DATA_UPDATE_POST_TIME = 5000;
+    private static final int GET_CHART_DATA_UPDATE_POST_TIME = 60000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -434,9 +434,11 @@ public class HomeActivity extends BaseActivity {
                 case R.id.iv_setting:
                     Intent intent = new Intent(HomeActivity.this , SettingActivity.class);
                     startActivity(intent);
-
+                    break;
                 case R.id.iv_back:
+                    Log.d(TAG, "onClick: finish!!!!!!!!");
                     finish();
+                    break;
             }
 
         }
@@ -456,7 +458,7 @@ public class HomeActivity extends BaseActivity {
             isRunning = false;
             isChartUpdate = false;
             //解绑
-            unbindService(serviceConnection);
+//            unbindService(serviceConnection);
         }
 
     }
@@ -471,8 +473,8 @@ public class HomeActivity extends BaseActivity {
 
     protected void initView() {
         progressBar = findViewById(R.id.pb_circleProgressBar);
-        progressBar.setProgress(5000);
-        progressBar.setMaxProgress(10000);
+        progressBar.setProgress(100);
+        progressBar.setMaxProgress(100);
         barChart = findViewById(R.id.chart1);
         tvCalorie = findViewById(R.id.tv_Calorie);
         tvDistance = findViewById(R.id.tv_distance);

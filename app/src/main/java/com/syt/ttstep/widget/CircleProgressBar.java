@@ -79,7 +79,7 @@ public class CircleProgressBar extends View {
         pathPaint.setStrokeWidth(pathWidth);
         //画圆
         canvas.drawCircle(width/2 , height/2 , radius , pathPaint);
-
+        //细边框宽度
         pathPaint.setStrokeWidth(0.5f);
         pathPaint.setColor(borderColor);
         //外边框
@@ -94,6 +94,7 @@ public class CircleProgressBar extends View {
         fillPait.setStrokeCap(Paint.Cap.ROUND);
         fillPait.setStrokeWidth(pathWidth);
         this.oval.set((float) (width / 2 - radius), (float) (height / 2 - radius), (float) (width / 2 + radius), (float) (height / 2 + radius));
+        //根据当前进度绘制bar
         canvas.drawArc(oval , -90.0F , ((float)progress/(float) maxProgress)*360.0F , false , fillPait);
     }
 
@@ -121,6 +122,7 @@ public class CircleProgressBar extends View {
 
     public void setProgress(int progress) {
         this.progress = progress;
+        //更新view
         invalidate();
     }
 
@@ -168,6 +170,7 @@ public class CircleProgressBar extends View {
         return bundle;
     }
 
+    //缓存数据，下次打开正常显示
     @Override
     protected void onRestoreInstanceState(Parcelable state)
     {

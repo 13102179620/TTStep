@@ -2,9 +2,10 @@ package com.syt.ttstep.frame;
 
 import android.os.Bundle;
 
+import android.support.v4.app.FragmentActivity;
 import android.view.Window;
 import android.view.WindowManager;
-import androidx.fragment.app.FragmentActivity;
+
 
 
 public abstract class BaseActivity extends FragmentActivity {
